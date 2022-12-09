@@ -1,33 +1,36 @@
 <script>
 import { ref } from "vue";
 import textToHTML from "../helpers/textToHTML";
-// import { onMounted } from "vue";
-// import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
-// import firestore from "../firebase"
+import { onMounted } from "vue";
+import { collection, doc, updateDoc, query, getDocs } from "firebase/firestore";
+import firestore from "../firebase";
 
 export default {
   setup() {
-    // const markdownsCol = collection(firestore, "markdowns");
-    // const docID = "aMqv2YGMu7tBbCfDUR9u";
-    // const markdownDoc = doc(markdownsCol, docID);
     const markdown = ref("");
     const convertedText = ref("");
+    const docID = "aMqv2YGMu7tBbCfDUR9u";
+    const markdownDoc = doc(firestore, "markdowns", docID);
 
-    function convertToHTML() {
-       convertedText.value = textToHTML(markdown.value)
-      // console.log(markdownDoc)
-      // setDoc(doc, { markdownDoc }, { markdown, convertedText });
+    async function convertToHTML() {
+      convertedText.value = textToHTML(markdown.value);
+      await updateDoc(markdownDoc, {
+        markdown: markdown.value,
+      });
     }
 
-    // onMounted(() => {
-    //   onSnapshot(markdownDoc, (snapshot) => {
-    //     console.log(markdownDoc)
-    //     console.log(snapshot.data())
-    //     const data = snapshot.data() || {};
-    //     convertedText.value = data.convertedText;
-    //     markdown.value = data.markdown;
-    //   });
-    // });
+    async function getMarkdowns() {
+      const q = query(collection(firestore, "markdowns"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        markdown.value = doc.data().markdown;
+      });
+      convertedText.value = textToHTML(markdown.value);
+    }
+
+    onMounted(() => {
+      getMarkdowns();
+    });
     return { markdown, convertedText, convertToHTML };
   },
 };
@@ -74,9 +77,9 @@ export default {
 .markdown-style
   padding: 12px
 
-@media (max-width: 425px) 
+@media (max-width: 425px)
   .textarea-side, .markdown-side
     width: 100%
   .preview-box
-    display: block !important    
+    display: block !important
 </style>
