@@ -1,25 +1,25 @@
-<script>
-import { ref } from "vue";
+<script lang="ts">
+import { defineComponent, ref } from "vue";
 import textToHTML from "../helpers/textToHTML";
 import { onMounted } from "vue";
 import { collection, doc, updateDoc, query, getDocs } from "firebase/firestore";
 import firestore from "../firebase";
 
-export default {
+export default defineComponent({
   setup() {
     const markdown = ref("");
     const convertedText = ref("");
     const docID = "aMqv2YGMu7tBbCfDUR9u";
     const markdownDoc = doc(firestore, "markdowns", docID);
 
-    async function convertToHTML() {
+    async function convertToHTML(): Promise<void> {
       convertedText.value = textToHTML(markdown.value);
       await updateDoc(markdownDoc, {
         markdown: markdown.value,
       });
     }
 
-    async function getMarkdowns() {
+    async function getMarkdowns(): Promise<void> {
       const q = query(collection(firestore, "markdowns"));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -33,7 +33,7 @@ export default {
     });
     return { markdown, convertedText, convertToHTML };
   },
-};
+});
 </script>
 
 <template>

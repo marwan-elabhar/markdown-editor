@@ -1,7 +1,5 @@
-<script>
-export default {
-  setup() {},
-};
+<script setup>
+
 </script>
 <template>
   <div class="page-layout w-100">

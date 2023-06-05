@@ -1,5 +1,5 @@
 export const config = {
-    firebase: {
+    firebase:  {
     apiKey: "AIzaSyBJef00PUQZ8o08zw4RJ_9ByvBGQX2D7Hs",
     authDomain: "markdown-editor-d070d.firebaseapp.com",
     projectId: "markdown-editor-d070d",
